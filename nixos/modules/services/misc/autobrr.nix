@@ -31,7 +31,7 @@ in
         type = lib.types.submodule { freeformType = configFormat.type; };
         default = {
           host = "127.0.0.1";
-          port = "7474";
+          port = 7474;
           checkForUpdates = true;
         };
         example = {
@@ -75,7 +75,7 @@ in
         DynamicUser = true;
         StateDirectory = "autobrr";
         ExecStartPre = "${lib.getExe pkgs.bash} -c '${templaterCmd}'";
-        ExecStart = "${lib.getExe pkgs.autobrr} --config %S/autobrr";
+        ExecStart = "${lib.getExe cfg.package} --config %S/autobrr";
         Restart = "on-failure";
       };
     };

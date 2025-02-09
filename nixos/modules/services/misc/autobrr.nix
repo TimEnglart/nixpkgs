@@ -9,7 +9,7 @@ let
   cfg = config.services.autobrr;
   configFormat = pkgs.formats.toml { };
   configTemplate = configFormat.generate "autobrr.toml" cfg.settings;
-  templaterCmd = "${lib.getExe pkgs.dasel} put -f '${configTemplate}' -v $(cat ${cfg.secretFile}) -o %S/autobrr/config.toml 'sessionSecret'";
+  templaterCmd = "${lib.getExe pkgs.dasel} put -f '${configTemplate}' -v $(cat $CREDENTIALS_DIRECTORY/session_secret) -o %S/autobrr/config.toml 'sessionSecret'";
 in
 {
   options = {
@@ -31,7 +31,7 @@ in
         type = lib.types.submodule { freeformType = configFormat.type; };
         default = {
           host = "127.0.0.1";
-          port = "7474";
+          port = 7474;
           checkForUpdates = true;
         };
         example = {
@@ -74,8 +74,9 @@ in
         Type = "simple";
         DynamicUser = true;
         StateDirectory = "autobrr";
+        LoadCredential = "session_secret:${cfg.secretFile}";
         ExecStartPre = "${lib.getExe pkgs.bash} -c '${templaterCmd}'";
-        ExecStart = "${lib.getExe pkgs.autobrr} --config %S/autobrr";
+        ExecStart = "${lib.getExe cfg.package} --config %S/autobrr";
         Restart = "on-failure";
       };
     };

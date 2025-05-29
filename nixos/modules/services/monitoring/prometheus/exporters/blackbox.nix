@@ -96,6 +96,7 @@ in
     in
     {
       serviceConfig = {
+        DynamicUser = false;
         AmbientCapabilities = [ "CAP_NET_RAW" ]; # for ping probes
         ExecStart = ''
           ${pkgs.prometheus-blackbox-exporter}/bin/blackbox_exporter \

@@ -15,6 +15,7 @@ let
     loadCredential = true;
   } cfg.configuration configPath;
   settingsPath = "${stateDir}/settings.yml";
+  includePath = "${stateDir}/includes";
 in
 {
   options.services.recyclarr = {
@@ -98,6 +99,12 @@ in
       '';
     };
 
+    includes = lib.mkOption {
+      type = lib.types.listOf lib.types.path;
+      default = [ ];
+      description = "Path to .yml files to include for `include` configuration calls";
+    };
+
     schedule = lib.mkOption {
       type = lib.types.str;
       default = "daily";
@@ -141,11 +148,22 @@ in
     systemd.services.recyclarr = {
       description = "Recyclarr Service";
 
-      # YAML is a JSON super-set
-      preStart = ''
-        ${secretsReplacement.script}
-        ${pkgs.coreutils}/bin/ln -fs ${format.generate "settings.yaml" cfg.settings} ${settingsPath}
-      '';
+      preStart =
+        let
+          symlinkFile = inPath: outPath: "${pkgs.coreutils}/bin/ln -fs ${inPath} ${outPath}";
+        in
+        builtins.concatStringsSep "\n" (
+          [
+            secretsReplacement.script
+            (symlinkFile (format.generate "settings.yaml" cfg.settings) settingsPath)
+          ]
+          ++ lib.optionals (builtins.length cfg.includes > 0) (
+            [
+              "mkdir -p ${includePath}"
+            ]
+            ++ (builtins.map (x: symlinkFile x includePath) cfg.includes)
+          )
+        );
 
       serviceConfig = {
         Type = "oneshot";

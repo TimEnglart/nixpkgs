@@ -109,6 +109,16 @@
           '';
         };
 
+        mount-nvidia-graphics-config = lib.mkOption {
+          default = true;
+          type = lib.types.bool;
+          description = ''
+            Mount the libglvnd EGL vendor and Vulkan ICD manifests
+            (10_nvidia.json, nvidia_icd.json) on containers, so EGL and Vulkan
+            applications can discover the Nvidia driver.
+          '';
+        };
+
         suppressNvidiaDriverAssertion = lib.mkOption {
           default = false;
           type = lib.types.bool;
@@ -279,6 +289,16 @@
                 containerPath = "${lib.getLib pkgs.glibc}/lib64";
               }
             ]
+            (lib.mkIf config.hardware.nvidia-container-toolkit.mount-nvidia-graphics-config [
+              {
+                hostPath = "${pkgs.addDriverRunpath.driverLink}/share/glvnd/egl_vendor.d/10_nvidia.json";
+                containerPath = "/usr/share/glvnd/egl_vendor.d/10_nvidia.json";
+              }
+              {
+                hostPath = "${pkgs.addDriverRunpath.driverLink}/share/vulkan/icd.d/nvidia_icd.json";
+                containerPath = "/usr/share/vulkan/icd.d/nvidia_icd.json";
+              }
+            ])
             (lib.mkIf config.hardware.nvidia-container-toolkit.mount-nvidia-executables [
               {
                 hostPath = lib.getExe' nvidia-driver "nvidia-cuda-mps-control";

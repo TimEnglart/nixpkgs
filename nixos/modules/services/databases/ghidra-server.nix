@@ -215,14 +215,13 @@ in
       ];
     };
 
-    systemd.tmpfiles.rules = [
-      "L+ /etc/ghidra-server.conf - - - - ${ghidraServerConfigFile}"
-    ];
+    environment.etc."ghidra-server.conf".source = ghidraServerConfigFile;
 
     systemd.services.ghidra-server = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];
       path = [ cfg.javaPackage ];
+      restartTriggers = [ ghidraServerConfigFile ];
       serviceConfig = {
         Type = "simple";
         User = cfg.user;

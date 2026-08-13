@@ -18,7 +18,8 @@ let
     else
       null;
 
-  mapToIndexedAttrs = xs: lib.attrsToList (lib.imap0 (i: lib.nameValuePair (toString i)) xs);
+  mapToIndexedAttrs =
+    xs: builtins.listToAttrs (lib.imap0 (i: v: lib.nameValuePair (toString i) v) xs);
 
   ghidraServerConfig = lib.filterAttrsRecursive (_: v: v != null) {
     wrapper.working.dir = "$${ghidra_home}";

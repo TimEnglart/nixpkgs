@@ -22,17 +22,17 @@ let
     xs: builtins.listToAttrs (lib.imap0 (i: v: lib.nameValuePair (toString i) v) xs);
 
   ghidraServerConfig = lib.filterAttrsRecursive (_: v: v != null) {
-    "wrapper.working.dir" = "$${ghidra_home}";
-    "wrapper.tmp.path" = "$${wrapper_tmpdir}";
+    wrapper.working.dir = "$${ghidra_home}";
+    wrapper.tmp.path = "$${wrapper_tmpdir}";
     include = "$${classpath_frag}";
 
-    "wrapper.java.app.mainclass" = "ghidra.server.remote.GhidraServer";
-    "wrapper.java.command" = "$${java}";
-    "wrapper.java.umask" = 027;
-    "wrapper.java.initmemory" = cfg.heapMin;
-    "wrapper.java.maxmemory" = cfg.heapMax;
+    wrapper.java.app.mainclass = "ghidra.server.remote.GhidraServer";
+    wrapper.java.command = "$${java}";
+    wrapper.java.umask = 027;
+    wrapper.java.initmemory = cfg.heapMin;
+    wrapper.java.maxmemory = cfg.heapMax;
 
-    "wrapper.java.additional" = mapToIndexedAttrs [
+    wrapper.java.additional = mapToIndexedAttrs [
       # TODO: Figure out if IPv6 is supported
       "-Djava.net.preferIPv4Stack=true"
       # TODO: Figure out if file logging may be disabled
@@ -50,9 +50,9 @@ let
       "-Ddb.buffers.DataBuffer.compressedOutput=true"
     ];
 
-    "ghidra.repositories.dir" = cfg.repositoryDir;
+    ghidra.repositories.dir = cfg.repositoryDir;
 
-    "wrapper.app.parameter" = mapToIndexedAttrs [
+    wrapper.app.parameter = mapToIndexedAttrs [
       authType
       (if (!cfg.authentication.useClientLogin) then "-u" else null)
       "-ip ${cfg.address}"
@@ -63,16 +63,16 @@ let
       cfg.repositoryDir
     ];
 
-    "wrapper.app.account" = cfg.user;
+    wrapper.app.account = cfg.user;
 
-    "wrapper.console.title" = cfg.console.title;
-    "wrapper.console.loglevel" = cfg.console.loglevel;
-    "wrapper.console.format" = cfg.console.format;
+    wrapper.console.title = cfg.console.title;
+    wrapper.console.loglevel = cfg.console.loglevel;
+    wrapper.console.format = cfg.console.format;
 
-    "wrapper.logfile" = "";
+    wrapper.logfile = "";
 
-    "wrapper.lockfile" = "/run/ghidra-server/ghidra-server.lck";
-    "wrapper.pidfile" = "/run/ghidra-server/ghidra-server.pid";
+    wrapper.lockfile = "/run/ghidra-server/ghidra-server.lck";
+    wrapper.pidfile = "/run/ghidra-server/ghidra-server.pid";
   };
 
   ghidraServerConfigFile =

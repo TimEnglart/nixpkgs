@@ -18,6 +18,17 @@ let
     else
       null;
 
+  mkPropertyString =
+    let
+      render = {
+        bool = lib.boolToString;
+        int = toString;
+        list = lib.concatMapStringsSep "," mkPropertyString;
+        string = lib.id;
+      };
+    in
+    v: render.${builtins.typeOf v} v;
+
   indexedProps =
     prefix: xs:
     builtins.listToAttrs (
@@ -76,9 +87,9 @@ let
       cfg.repositoryDir
     ]);
 
-  ghidraServerConfigFile =
-    (pkgs.formats.javaProperties { }).generate "ghidra-server.conf"
-      ghidraServerConfig;
+  ghidraServerConfigFile = (pkgs.formats.javaProperties { }).generate "ghidra-server.conf" (
+    lib.mapAttrs (_: mkPropertyString) ghidraServerConfig
+  );
 in
 {
   options.services.ghidra-server = {

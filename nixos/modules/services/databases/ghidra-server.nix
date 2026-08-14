@@ -37,9 +37,9 @@ let
 
   ghidraServerConfig =
     lib.filterAttrsRecursive (_: v: v != null) {
-      "wrapper.working.dir" = "$${ghidra_home}";
-      "wrapper.tmp.path" = "$${wrapper_tmpdir}";
-      include = "$${classpath_frag}";
+      "wrapper.working.dir" = "\${ghidra_home}";
+      "wrapper.tmp.path" = "\${wrapper_tmpdir}";
+      include = "\${classpath_frag}";
 
       "wrapper.java.app.mainclass" = "ghidra.server.remote.GhidraServer";
       "wrapper.java.command" = "$${java}";
@@ -64,9 +64,9 @@ let
       "-Djava.net.preferIPv4Stack=true"
       # TODO: Figure out if file logging may be disabled
       "-DApplicationRollingFileAppender.maxBackupIndex=10"
-      "-Dclasspath_frag=$${classpath_frag}"
-      "-Djava.io.tmpdir=$${wrapper_tmpdir}"
-      "-Djna.tmpdir=$${wrapper_tmpdir}"
+      "-Dclasspath_frag=\${classpath_frag}"
+      "-Djava.io.tmpdir=\${wrapper_tmpdir}"
+      "-Djna.tmpdir=\${wrapper_tmpdir}"
       "-Dghidra.tls.server.protocols=${lib.strings.concatStringsSep ";" cfg.tls.protocols}"
       "-Djdk.tls.server.cipherSuites=${lib.strings.concatStringsSep "\\," cfg.tls.cipherSuites}"
       # TODO: Enable PKI authentication

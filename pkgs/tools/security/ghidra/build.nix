@@ -186,7 +186,7 @@ stdenv.mkDerivation (finalAttrs: {
       --prefix PATH : ${lib.makeBinPath [ openjdk21 ]}
 
     # Needed by the Ghidra Server NixOS module. Create a symlink in order to provide a stable path.
-    ln -s "$out/lib/ghidra/Ghidra/Features/GhidraServer/data/yajsw-stable-13.12" "$out/lib/ghidra/Ghidra/Features/GhidraServer/data/yajsw"
+    ln -s "$out/lib/ghidra/Ghidra/Features/GhidraServer/data/yajsw-stable-"* "$out/lib/ghidra/Ghidra/Features/GhidraServer/data/yajsw"
 
     # Rewrite hard-coded path to Ghidra server config file
     # to what works for the NixOS module.
